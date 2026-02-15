@@ -10,7 +10,7 @@ st.title("🕊️ Конфликт-Транслятор")
 if "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     st.error("🔑 Ошибка: Ключ GEMINI_API_KEY не найден в Secrets!")
     st.info("Зайдите в Settings -> Secrets в Streamlit Cloud и добавьте ключ.")
