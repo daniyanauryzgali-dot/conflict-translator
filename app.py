@@ -4,12 +4,14 @@ import google.generativeai as genai
 # Подтягиваем ключ из секретов Streamlit
 api_key = st.secrets.get("GEMINI_API_KEY")
 
-if api_key:
+if "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
 else:
-    st.error("Ошибка: API ключ не найден в Secrets!")
-
+    st.error("🚨 Критическая ошибка: Ключ GEMINI_API_KEY не найден в системных Secrets!")
+    st.info("Зайдите в 'Manage App' -> 'Settings' -> 'Secrets' и проверьте написание ключа.")
+    st.stop()
 st.set_page_config(page_title="Conflict AI", page_icon="🕊️")
 
 st.title("🕊️ AI Конфликт-Транслятор")
