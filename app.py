@@ -1,32 +1,32 @@
 import streamlit as st
-import google.generativeai as genai
+from groq import Groq
 
-# Настройка страницы
-st.set_page_config(page_title="AI Конфликт-Транслятор")
+st.set_page_config(page_title="Конфликт-Транслятор", page_icon="🕊️")
 st.title("🕊️ Конфликт-Транслятор")
 
-# 1. ПОЛУЧЕНИЕ КЛЮЧА (БЕЗОПАСНО)
-# Проверяем наличие ключа в Secrets
-if "GEMINI_API_KEY" in st.secrets:
-    api_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+# Проверяем ключ
+if "GROQ_API_KEY" in st. secrets:
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 else:
-    st.error("🔑 Ошибка: Ключ GEMINI_API_KEY не найден в Secrets!")
-    st.info("Зайдите в Settings -> Secrets в Streamlit Cloud и добавьте ключ.")
+    st.error("Ключ GROQ_API_KEY не найден в Secrets!")
     st.stop()
 
-# 2. ИНТЕРФЕЙС
-user_input = st.text_area("Введите ваше сообщение (как оно звучит сейчас):")
+user_input = st.text_area("Введите ваше сообщение:")
 
 if st.button("Трансформировать"):
     if user_input:
         try:
-            prompt = f"Перефразируй это сообщение, чтобы оно звучало конструктивно и без агрессии, сохраняя смысл: {user_input}"
-            response = model.generate_content(prompt)
+            # Используем модель Llama 3 - она очень мощная и быстрая
+            completion = client.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": "Ты помощник, который перефразирует агрессивные сообщения в конструктивные и вежливые на русском языке."},
+                    {"role": "user", "content": user_input}
+                ],
+            )
             st.subheader("Результат:")
-            st.success(response.text)
+            st.success(completion.choices[0].message.content)
         except Exception as e:
-            st.error(f"Произошла ошибка при обращении к ИИ: {e}")
+            st.error(f"Ошибка: {e}")
     else:
-        st.warning("Пожалуйста, введите текст.")
+        st.warning("Сначала введите текст!")
