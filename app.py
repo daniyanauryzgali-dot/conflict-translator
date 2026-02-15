@@ -1,34 +1,36 @@
 import streamlit as st
 from groq import Groq
 
-st.title("Conflict Translator")
+st.title("Conflict Translator 2.0")
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-text = st.text_area("Что случилось? (введи фразу)")
-style = st.radio("Как ответить?", ["Вежливо", "Официально", "Задать вопрос"])
+text = st.text_area("Введите фразу для разбора:")
+style = st.selectbox("Стиль ответа:", ["Дружелюбный", "Профессиональный", "Нейтральный"])
 
-if st.button("Перевести"):
+if st.button("Анализировать"):
     if text:
         my_prompt = f"""
-        Разбери фразу: {text}
-        1. Какая тут эмоция?
-        2. Какой скрытый смысл?
-        3. Переделай в стиле {style}.
-        4. Будет ли конфликт дальше (в %)?
+        Проанализируй кратко: "{text}"
+        1. Какие здесь эмоции? (одним-двумя словами)
+        2. Какие есть риски для отношений, если ответить агрессивно?
+        3. Как лучше изменить эту фразу?
+        4. Пример ответа в стиле {style}:
         """
         
         try:
+            # Запрос к рабочей модели Llama 3.3
             chat = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[{"role": "user", "content": my_prompt}]
             )
             
-            result = chat.choices[0].message.content
-            st.write("---")
-            st.write(result)
+            # Вывод результата
+            st.markdown("---")
+            st.markdown("### Результат разбора:")
+            st.write(chat.choices[0].message.content)
             
         except Exception as e:
-            st.error(f"Ошибка: {e}")
+            st.error(f"Технический сбой: {e}")
     else:
-        st.write("Пусто, напиши что-нибудь")
+        st.warning("Сначала введите текст!")
