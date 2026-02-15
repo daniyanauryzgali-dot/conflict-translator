@@ -42,7 +42,7 @@ if st.button("Разрядить обстановку"):
             try:
                 response = model.generate_content(prompt)
                 st.markdown(response.text)
-            except Exception as e:
-                st.error(f"Произошла ошибка при обращении к ИИ.")
+           except Exception as e:
+            st.error(f"Техническая ошибка: {e}")
     else:
         st.warning("Поле ввода пустое.")
