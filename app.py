@@ -1,33 +1,34 @@
 import streamlit as st
 from groq import Groq
 
-st.set_page_config(page_title="Конфликт-Транслятор", page_icon="🕊️")
-st.title("🕊️ Конфликт-Транслятор")
+st.title("Conflict Translator")
 
-# Проверяем ключ
-if "GROQ_API_KEY" in st. secrets:
-    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-else:
-    st.error("Ключ GROQ_API_KEY не найден в Secrets!")
-    st.stop()
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-user_input = st.text_area("Введите ваше сообщение:")
+text = st.text_area("Что случилось? (введи фразу)")
+style = st.radio("Как ответить?", ["Вежливо", "Официально", "Задать вопрос"])
 
-if st.button("Трансформировать"):
-    if user_input:
+if st.button("Перевести"):
+    if text:
+        my_prompt = f"""
+        Разбери фразу: {text}
+        1. Какая тут эмоция?
+        2. Какой скрытый смысл?
+        3. Переделай в стиле {style}.
+        4. Будет ли конфликт дальше (в %)?
+        """
+        
         try:
-            
-# Используем актуальную модель Llama 3.3
-            completion = client.chat.completions.create(
+            chat = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
-                messages=[
-                    {"role": "system", "content": "Ты помощник, который перефразирует агрессивные сообщения в конструктивные и вежливые на русском языке."},
-                    {"role": "user", "content": user_input}
-                ],
+                messages=[{"role": "user", "content": my_prompt}]
             )
-            st.subheader("Результат:")
-            st.success(completion.choices[0].message.content)
+            
+            result = chat.choices[0].message.content
+            st.write("---")
+            st.write(result)
+            
         except Exception as e:
             st.error(f"Ошибка: {e}")
     else:
-        st.warning("Сначала введите текст!")
+        st.write("Пусто, напиши что-нибудь")
