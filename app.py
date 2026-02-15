@@ -41,10 +41,12 @@ if st.button("Разрядить обстановку"):
             * **Вариант 3 (Решение):** (предложить выход из ситуации)
             """
             
-            try:
-                response = model.generate_content(prompt)
-                st.markdown(response.text)
-           except Exception:
-            st.error(f"Техническая ошибка:")
+           if user_input:
+        try:
+            # Обращаемся к модели
+            response = model.generate_content(user_input)
+            st.write(response.text)
+        except Exception as e:
+            st.error(f"Ошибка ИИ: {e}")
     else:
-        st.warning("Поле ввода пустое.")
+        st.warning("Введите текст для перевода.")
