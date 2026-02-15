@@ -16,9 +16,10 @@ user_input = st.text_area("Введите ваше сообщение:")
 if st.button("Трансформировать"):
     if user_input:
         try:
-            # Используем модель Llama 3 - она очень мощная и быстрая
+            
+# Используем актуальную модель Llama 3.3
             completion = client.chat.completions.create(
-                model="llama3-8b-8192",
+                model="llama-3.3-70b-versatile",
                 messages=[
                     {"role": "system", "content": "Ты помощник, который перефразирует агрессивные сообщения в конструктивные и вежливые на русском языке."},
                     {"role": "user", "content": user_input}
